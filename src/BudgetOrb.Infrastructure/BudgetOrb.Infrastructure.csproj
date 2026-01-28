@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\BudgetOrb.Application\BudgetOrb.Application.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<Solution>
+    <Folder Name="/Solution Items/">
+        <File Path=".editorconfig" />
+        <File Path=".gitignore" />
+        <File Path="BudgetOrb.slnx" />
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Packages.props" />
+        <File Path="LICENSE" />
+        <File Path="README.md" />
+    </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/BudgetOrb.Application/BudgetOrb.Application.csproj" />
+        <Project Path="src/BudgetOrb.Domain/BudgetOrb.Domain.csproj" />
+        <Project Path="src/BudgetOrb.Infrastructure/BudgetOrb.Infrastructure.csproj" />
+        <Project Path="src/BudgetOrb.Web/BudgetOrb.Web.csproj" />
+    </Folder>
+</Solution>
