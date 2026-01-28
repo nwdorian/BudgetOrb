@@ -1,4 +1,8 @@
-﻿WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+﻿using BudgetOrb.Infrastructure;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 

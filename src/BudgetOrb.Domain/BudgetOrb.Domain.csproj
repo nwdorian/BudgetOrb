@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <Folder Include="Categories\" />
-    <Folder Include="Transactions\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Categories\" />
+        <Folder Include="Transactions\" />
+    </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using System.Transactions;
+﻿using BudgetOrb.Domain.Transactions;
 
 namespace BudgetOrb.Domain.Categories;
 

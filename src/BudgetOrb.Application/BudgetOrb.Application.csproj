@@ -2,4 +2,11 @@
     <ItemGroup>
         <ProjectReference Include="..\BudgetOrb.Domain\BudgetOrb.Domain.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Abstractions\" />
+      <Folder Include="Abstractions\Data\" />
+    </ItemGroup>
 </Project>
