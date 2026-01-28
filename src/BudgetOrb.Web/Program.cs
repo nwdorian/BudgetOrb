@@ -1,4 +1,5 @@
 ﻿using BudgetOrb.Infrastructure;
+using BudgetOrb.Web.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -22,5 +23,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}").WithStaticAssets();
+
+await app.ApplyMigrations();
 
 await app.RunAsync();
