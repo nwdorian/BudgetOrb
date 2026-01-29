@@ -26,4 +26,9 @@ app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Inde
 
 await app.ApplyMigrations();
 
+if (!app.Environment.IsProduction())
+{
+    await app.SeedDatabase();
+}
+
 await app.RunAsync();

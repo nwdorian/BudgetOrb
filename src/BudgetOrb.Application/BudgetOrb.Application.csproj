@@ -6,7 +6,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Abstractions\" />
-      <Folder Include="Abstractions\Data\" />
+        <Folder Include="Abstractions\" />
+        <Folder Include="Abstractions\Data\" />
     </ItemGroup>
 </Project>

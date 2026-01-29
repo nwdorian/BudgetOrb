@@ -1,5 +1,4 @@
-﻿using BudgetOrb.Domain.Categories;
-using BudgetOrb.Domain.Transactions;
+﻿using BudgetOrb.Domain.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +14,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
 
         builder.Property(t => t.Comment).HasMaxLength(255);
 
-        builder.HasOne<Category>().WithMany(t => t.Transactions).HasForeignKey(t => t.CategoryId);
+        builder.HasOne(t => t.Category).WithMany(t => t.Transactions).HasForeignKey(t => t.CategoryId);
     }
 }
