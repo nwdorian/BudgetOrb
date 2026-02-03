@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
         <Folder Include="Categories\" />
+        <Folder Include="Core\" />
+        <Folder Include="Core\Pagination\" />
         <Folder Include="Transactions\" />
     </ItemGroup>
 </Project>

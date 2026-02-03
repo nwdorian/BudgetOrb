@@ -1,0 +1,132 @@
+﻿@model TransactionIndexViewModel
+
+@{
+    ViewData["Title"] = "Transactions";
+
+    Dictionary<string, string?> pagingRouteValues = new()
+    {
+        [nameof(Model.SearchTerm)] = Model.SearchTerm,
+        [nameof(Model.Category)] = Model.Category,
+        [nameof(Model.StartDate)] = Model.StartDate?.ToString("yyyy-MM-ddTHH:mm"),
+        [nameof(Model.EndDate)] = Model.EndDate?.ToString("yyyy-MM-ddTHH:mm"),
+        [nameof(Model.SortColumn)] = Model.SortColumn.ToString(),
+        [nameof(Model.SortOrder)] = Model.SortOrder.ToString(),
+        [nameof(Model.PageSize)] = Model.PageSize.ToString()
+    };
+}
+
+<h1>Transactions</h1>
+
+<form id="filter-form" asp-controller="Transactions" asp-action="Index" method="get">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex gap-2">
+            <input class="form-control" id="search-term" type="text" asp-for="SearchTerm" placeholder="Search..."
+                oninput="this.form.submit()" style="width: 300px;" />
+
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Add Transaction
+            </a>
+        </div>
+
+    </div>
+
+    <div class="d-flex align-items-center gap-3 flex-wrap p-2 bg-light rounded border mb-3">
+        <div class="d-flex align-items-center gap-1">
+            <label class="small fw-bold text-muted" for="category-select">Category:</label>
+            <select class="form-select form-select-sm w-auto" id="category-select" asp-for="Category"
+                asp-items="Model.Categories" onchange="this.form.submit()">
+                <option value="">All</option>
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-1">
+            <label class="small fw-bold text-muted">From:</label>
+            <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="StartDate"
+                onchange="this.form.submit()" />
+            <label class="small fw-bold text-muted">To:</label>
+            <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="EndDate"
+                onchange="this.form.submit()" />
+        </div>
+
+        <div class="d-flex align-items-center gap-1 ms-auto">
+            <label class="small fw-bold text-muted">Sort:</label>
+            <select class="form-select-sm w-auto" asp-for="SortColumn" asp-items="Model.SortColumns"
+                onchange="this.form.submit()"></select>
+            <select class="form-select-sm w-auto" asp-for="SortOrder" asp-items="Model.SortOrders"
+                onchange="this.form.submit()"></select>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions[0].Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions[0].Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions[0].Comment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions[0].Category)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Transactions)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Comment)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Category)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center">
+    <ul class="pagination mb-0">
+        <li class="page-item @(Model.PagingMetadata.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
+                asp-route-PageNumber="@(Model.PagingMetadata.PageNumber - 1)">
+                <i class="bi bi-caret-left-fill"></i>
+            </a>
+        </li>
+        @for (var i = Model.PagingMetadata.StartPage; i <= Model.PagingMetadata.EndPage; i++)
+        {
+            <li class="page-item @(i == Model.PagingMetadata.PageNumber ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues" asp-route-PageNumber="@i">
+                    @i
+                </a>
+            </li>
+        }
+        <li class="page-item @(Model.PagingMetadata.HasNextPage ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
+                asp-route-PageNumber="@(Model.PagingMetadata.PageNumber + 1)">
+                <i class="bi bi-caret-right-fill"></i>
+            </a>
+        </li>
+    </ul>
+    <div class="d-flex align-items-center gap-2">
+        <label class="form-label" for="page-size-select">Page size: </label>
+        <select class="form-control w-auto" id="page-size-select" form="filter-form" asp-for="PageSize"
+            asp-items="Model.PageSizes" onchange="document.getElementById('filter-form').submit()">
+        </select>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/focusSearchInput.js"></script>
+}

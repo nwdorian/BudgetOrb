@@ -9,6 +9,9 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
+        <Folder Include="Constants\" />
         <Folder Include="Extensions\" />
+        <Folder Include="ViewModels\Shared\" />
+        <Folder Include="Views\Transactions\" />
     </ItemGroup>
 </Project>

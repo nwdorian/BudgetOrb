@@ -8,5 +8,9 @@
     <ItemGroup>
         <Folder Include="Abstractions\" />
         <Folder Include="Abstractions\Data\" />
+        <Folder Include="Categories\" />
+        <Folder Include="Categories\Contracts\" />
+        <Folder Include="Common\" />
+        <Folder Include="Common\Enums\" />
     </ItemGroup>
 </Project>
