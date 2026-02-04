@@ -16,7 +16,7 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Transaction> transactionsQuery = context.Transactions.Include(t => t.Category).AsNoTracking();
+        IQueryable<Transaction> transactionsQuery = context.Transactions.Include(t => t.Category);
 
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))
         {

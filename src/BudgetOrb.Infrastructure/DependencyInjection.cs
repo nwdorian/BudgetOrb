@@ -20,7 +20,9 @@ public static class DependencyInjection
         string? connectionString =
             configuration.GetConnectionString("Default")
             ?? throw new InvalidOperationException("Connection string 'Default' not found.");
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+        );
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
     }
 }
