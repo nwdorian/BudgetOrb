@@ -33,10 +33,11 @@ async function submitForm(form, event) {
 
         if (response.status !== 201) {
             const errorHtml = await response.text();
-            container.innerHTML = errorHtml;
-            modal = new bootstrap.Modal(document.getElementById("transaction-modal"));
-            modal.show();
+            const errorDiv = document.createElement("div");
+            errorDiv.innerHTML = errorHtml;
 
+            const errorContent = errorDiv.querySelector(".modal-content").innerHTML;
+            document.querySelector("#transaction-modal .modal-content").innerHTML = errorContent;
             return;
         }
 
