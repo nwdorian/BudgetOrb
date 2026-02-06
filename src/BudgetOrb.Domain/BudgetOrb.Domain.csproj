@@ -3,6 +3,7 @@
         <Folder Include="Categories\" />
         <Folder Include="Core\" />
         <Folder Include="Core\Pagination\" />
+        <Folder Include="Core\Results\" />
         <Folder Include="Transactions\" />
     </ItemGroup>
 </Project>

@@ -3,7 +3,9 @@ using BudgetOrb.Application.Abstractions;
 using BudgetOrb.Application.Abstractions.Data;
 using BudgetOrb.Application.Common.Enums;
 using BudgetOrb.Application.Transactions.Contracts;
+using BudgetOrb.Domain.Categories;
 using BudgetOrb.Domain.Core.Pagination;
+using BudgetOrb.Domain.Core.Results;
 using BudgetOrb.Domain.Transactions;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +18,7 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Transaction> transactionsQuery = context.Transactions.Include(t => t.Category);
+        IQueryable<Transaction> transactionsQuery = context.Transactions;
 
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))
         {
@@ -78,6 +80,30 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
             pagedResult.HasNextPage,
             pagedResult.Items
         );
+    }
+
+    public async Task<Result> Create(CreateTransactionCommand command, CancellationToken cancellationToken)
+    {
+        bool categoryExists = await context.Categories.AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
+
+        if (!categoryExists)
+        {
+            return CategoryErrors.NotFoundById(command.CategoryId);
+        }
+
+        Transaction transaction = new()
+        {
+            Id = Guid.NewGuid(),
+            CategoryId = command.CategoryId,
+            Amount = command.Amount,
+            Comment = command.Comment,
+            Date = command.Date,
+        };
+
+        context.Transactions.Add(transaction);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 
     private static Expression<Func<Transaction, object>> GetSortColumn(GetTransactionsPageQuery query)

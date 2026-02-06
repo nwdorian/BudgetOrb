@@ -9,5 +9,5 @@ public class Transaction
     public decimal Amount { get; set; }
     public string? Comment { get; set; }
     public DateTime Date { get; set; }
-    public required Category Category { get; set; }
+    public Category Category { get; set; } = null!;
 }

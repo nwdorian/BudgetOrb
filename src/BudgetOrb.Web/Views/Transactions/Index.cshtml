@@ -23,9 +23,7 @@
             <input class="form-control" id="search-term" type="text" asp-for="SearchTerm" placeholder="Search..."
                 oninput="this.form.submit()" style="width: 300px;" />
 
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Add Transaction
-            </a>
+            <button type="button" class="btn btn-primary" onclick="loadCreateModal()">New transaction</button>
         </div>
 
     </div>
@@ -121,12 +119,15 @@
     </ul>
     <div class="d-flex align-items-center gap-2">
         <label class="form-label" for="page-size-select">Page size: </label>
-        <select class="form-control w-auto" id="page-size-select" form="filter-form" asp-for="PageSize"
+        <select class="form-select w-auto" id="page-size-select" form="filter-form" asp-for="PageSize"
             asp-items="Model.PageSizes" onchange="document.getElementById('filter-form').submit()">
         </select>
     </div>
 </div>
 
+<div id="create-transaction-modal"></div>
+
 @section Scripts {
     <script src="~/js/focusSearchInput.js"></script>
+    <script src="~/js/Transactions/createTransaction.js"></script>
 }
