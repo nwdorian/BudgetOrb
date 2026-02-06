@@ -1,5 +1,5 @@
 let modal;
-const container = document.getElementById("create-transaction-modal");
+const container = document.getElementById("create-transaction-modal-placeholder");
 
 async function loadCreateModal() {
     try {
@@ -10,7 +10,7 @@ async function loadCreateModal() {
         const html = await response.text();
         container.innerHTML = html;
 
-        modal = new bootstrap.Modal(document.getElementById("transaction-modal"));
+        modal = new bootstrap.Modal(document.getElementById("create-transaction-modal"));
         modal.show();
     } catch (error) {
         alert("Something went wrong while loading the form");
@@ -37,7 +37,7 @@ async function submitForm(form, event) {
             errorDiv.innerHTML = errorHtml;
 
             const errorContent = errorDiv.querySelector(".modal-content").innerHTML;
-            document.querySelector("#transaction-modal .modal-content").innerHTML = errorContent;
+            document.querySelector("#create-transaction-modal .modal-content").innerHTML = errorContent;
             return;
         }
 
