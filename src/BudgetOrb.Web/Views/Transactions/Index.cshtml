@@ -21,7 +21,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="d-flex gap-2">
             <input class="form-control" id="search-term" type="text" asp-for="SearchTerm" placeholder="Search..."
-                oninput="this.form.submit()" style="width: 300px;" />
+                   oninput="this.form.submit()" style="width: 300px;" />
 
             <button type="button" class="btn btn-primary" onclick="loadCreateModal()">New transaction</button>
         </div>
@@ -32,7 +32,7 @@
         <div class="d-flex align-items-center gap-1">
             <label class="small fw-bold text-muted" for="category-select">Category:</label>
             <select class="form-select form-select-sm w-auto" id="category-select" asp-for="Category"
-                asp-items="Model.Categories" onchange="this.form.submit()">
+                    asp-items="Model.Categories" onchange="this.form.submit()">
                 <option value="">All</option>
             </select>
         </div>
@@ -40,18 +40,18 @@
         <div class="d-flex align-items-center gap-1">
             <label class="small fw-bold text-muted">From:</label>
             <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="StartDate"
-                onchange="this.form.submit()" />
+                   onchange="this.form.submit()" />
             <label class="small fw-bold text-muted">To:</label>
             <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="EndDate"
-                onchange="this.form.submit()" />
+                   onchange="this.form.submit()" />
         </div>
 
         <div class="d-flex align-items-center gap-1 ms-auto">
             <label class="small fw-bold text-muted">Sort:</label>
             <select class="form-select-sm w-auto" asp-for="SortColumn" asp-items="Model.SortColumns"
-                onchange="this.form.submit()"></select>
+                    onchange="this.form.submit()"></select>
             <select class="form-select-sm w-auto" asp-for="SortOrder" asp-items="Model.SortOrders"
-                onchange="this.form.submit()"></select>
+                    onchange="this.form.submit()"></select>
         </div>
     </div>
 </form>
@@ -71,6 +71,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Transactions[0].Category)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -89,6 +90,9 @@
                 <td>
                     @Html.DisplayFor(model => item.Category)
                 </td>
+                <td>
+                    <button type="button" class="btn btn-primary" onclick="loadDeleteModal('@item.Id')">Delete</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -98,7 +102,7 @@
     <ul class="pagination mb-0">
         <li class="page-item @(Model.PagingMetadata.HasPreviousPage ? "" : "disabled")">
             <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
-                asp-route-PageNumber="@(Model.PagingMetadata.PageNumber - 1)">
+                   asp-route-PageNumber="@(Model.PagingMetadata.PageNumber - 1)">
                 <i class="bi bi-caret-left-fill"></i>
             </a>
         </li>
@@ -112,7 +116,7 @@
         }
         <li class="page-item @(Model.PagingMetadata.HasNextPage ? "" : "disabled")">
             <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
-                asp-route-PageNumber="@(Model.PagingMetadata.PageNumber + 1)">
+                   asp-route-PageNumber="@(Model.PagingMetadata.PageNumber + 1)">
                 <i class="bi bi-caret-right-fill"></i>
             </a>
         </li>
@@ -120,14 +124,16 @@
     <div class="d-flex align-items-center gap-2">
         <label class="form-label" for="page-size-select">Page size: </label>
         <select class="form-select w-auto" id="page-size-select" form="filter-form" asp-for="PageSize"
-            asp-items="Model.PageSizes" onchange="document.getElementById('filter-form').submit()">
+                asp-items="Model.PageSizes" onchange="document.getElementById('filter-form').submit()">
         </select>
     </div>
 </div>
 
 <div id="create-transaction-modal-placeholder"></div>
+<div id="delete-transaction-modal-placeholder"></div>
 
 @section Scripts {
     <script src="~/js/focusSearchInput.js"></script>
     <script src="~/js/Transactions/createTransaction.js"></script>
+    <script src="~/js/Transactions/deleteTransaction.js"></script>
 }

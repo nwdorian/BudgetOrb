@@ -86,4 +86,64 @@ public class TransactionsController(ITransactionService transactionService, ICat
 
         return Created();
     }
+
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        GetTransactionByIdQuery getTransactionByIdQuery = new(id);
+        Result<GetTransactionByIdResponse> getTransactionByIdResponse = await transactionService.GetById(
+            getTransactionByIdQuery,
+            cancellationToken
+        );
+
+        if (getTransactionByIdResponse.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, getTransactionByIdResponse.Error.Description);
+
+            return PartialView(
+                "_DeleteTransactionPartial",
+                TransactionDeleteViewModel.Create(Guid.Empty, DateTime.Now, 0, string.Empty, string.Empty)
+            );
+        }
+
+        return PartialView(
+            "_DeleteTransactionPartial",
+            TransactionDeleteViewModel.Create(
+                getTransactionByIdResponse.Value.Id,
+                getTransactionByIdResponse.Value.Date,
+                getTransactionByIdResponse.Value.Amount,
+                getTransactionByIdResponse.Value.Comment,
+                getTransactionByIdResponse.Value.Category
+            )
+        );
+    }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(Guid id, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        DeleteTransactionCommand deleteTransactionCommand = new(id);
+        Result deleteTransactionResult = await transactionService.Delete(deleteTransactionCommand, cancellationToken);
+
+        if (deleteTransactionResult.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, deleteTransactionResult.Error.Description);
+
+            return PartialView(
+                "_DeleteTransactionPartial",
+                TransactionDeleteViewModel.Create(Guid.Empty, DateTime.Now, 0, string.Empty, string.Empty)
+            );
+        }
+
+        return NoContent();
+    }
 }

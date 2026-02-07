@@ -82,6 +82,31 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
         );
     }
 
+    public async Task<Result<GetTransactionByIdResponse>> GetById(
+        GetTransactionByIdQuery query,
+        CancellationToken cancellationToken
+    )
+    {
+        GetTransactionByIdResponse? response = await context
+            .Transactions.Where(t => t.Id == query.Id)
+            .Select(t => new GetTransactionByIdResponse(
+                t.Id,
+                t.CategoryId,
+                t.Amount,
+                t.Comment,
+                t.Date,
+                t.Category.Name
+            ))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (response is null)
+        {
+            return TransactionErrors.NotFoundById(query.Id);
+        }
+
+        return response;
+    }
+
     public async Task<Result> Create(CreateTransactionCommand command, CancellationToken cancellationToken)
     {
         bool categoryExists = await context.Categories.AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
@@ -101,6 +126,24 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
         };
 
         context.Transactions.Add(transaction);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> Delete(DeleteTransactionCommand command, CancellationToken cancellationToken)
+    {
+        Transaction? transaction = await context.Transactions.FirstOrDefaultAsync(
+            t => t.Id == command.Id,
+            cancellationToken
+        );
+
+        if (transaction is null)
+        {
+            return TransactionErrors.NotFoundById(command.Id);
+        }
+
+        context.Transactions.Remove(transaction);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
