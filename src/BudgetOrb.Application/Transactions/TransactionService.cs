@@ -149,6 +149,36 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
         return Result.Success();
     }
 
+    public async Task<Result> Update(Guid id, UpdateTransactionCommand command, CancellationToken cancellationToken)
+    {
+        Transaction? transaction = await context.Transactions.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+
+        if (transaction is null)
+        {
+            return TransactionErrors.NotFoundById(id);
+        }
+
+        bool categoryExists = await context.Categories.AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
+
+        if (!categoryExists)
+        {
+            return CategoryErrors.NotFoundById(command.CategoryId);
+        }
+
+        transaction.CategoryId = command.CategoryId;
+        transaction.Amount = command.Amount;
+        transaction.Date = command.Date;
+        if (!string.IsNullOrWhiteSpace(command.Comment))
+        {
+            transaction.Comment = command.Comment;
+        }
+
+        context.Transactions.Update(transaction);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
     private static Expression<Func<Transaction, object>> GetSortColumn(GetTransactionsPageQuery query)
     {
         return query.SortColumn switch

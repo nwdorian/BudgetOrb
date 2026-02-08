@@ -146,4 +146,63 @@ public class TransactionsController(ITransactionService transactionService, ICat
 
         return NoContent();
     }
+
+    public async Task<IActionResult> Update(Guid id, CancellationToken cancellationToken = default)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        GetTransactionByIdQuery getTransactionByIdQuery = new(id);
+        Result<GetTransactionByIdResponse> getTransactionByIdResponse = await transactionService.GetById(
+            getTransactionByIdQuery,
+            cancellationToken
+        );
+
+        if (getTransactionByIdResponse.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, getTransactionByIdResponse.Error.Description);
+
+            return PartialView("_UpdateTransactionPartial", TransactionUpdateViewModel.Empty);
+        }
+
+        GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
+
+        return PartialView(
+            "_UpdateTransactionPartial",
+            TransactionUpdateViewModel.Create(getTransactionByIdResponse.Value, getCategoriesResponse)
+        );
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(
+        Guid id,
+        TransactionUpdateViewModel updateModel,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!ModelState.IsValid)
+        {
+            GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
+            updateModel.Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name");
+
+            return PartialView("_UpdateTransactionPartial", updateModel);
+        }
+
+        Result updateTransaction = await transactionService.Update(id, updateModel.ToCommand(), cancellationToken);
+
+        if (updateTransaction.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, updateTransaction.Error.Description);
+
+            GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
+            updateModel.Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name");
+
+            return PartialView("_UpdateTransactionPartial", updateModel);
+        }
+
+        return NoContent();
+    }
 }

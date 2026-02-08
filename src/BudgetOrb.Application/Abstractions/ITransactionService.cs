@@ -12,4 +12,5 @@ public interface ITransactionService
     );
     Task<Result> Create(CreateTransactionCommand command, CancellationToken cancellationToken);
     Task<Result> Delete(DeleteTransactionCommand command, CancellationToken cancellationToken);
+    Task<Result> Update(Guid id, UpdateTransactionCommand command, CancellationToken cancellationToken);
 }
