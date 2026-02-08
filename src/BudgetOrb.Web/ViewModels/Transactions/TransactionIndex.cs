@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BudgetOrb.Web.ViewModels.Transactions;
 
-public class TransactionIndexViewModel
+public class TransactionIndex
 {
     public IReadOnlyList<TransactionItem> Transactions { get; set; } = [];
     public PagingMetadata PagingMetadata { get; set; } = default!;
@@ -39,10 +39,10 @@ public class TransactionIndexViewModel
         public string? Comment { get; set; } = comment ?? "No comment";
     }
 
-    public static TransactionIndexViewModel Create(
+    public static TransactionIndex Create(
         GetTransactionPageRequest request,
-        GetTransactionsPageResponse getTransactionsPageResponse,
-        GetCategoriesResponse getCategoriesResponse
+        GetTransactionsPageResponse getTransactionsPage,
+        GetCategoriesResponse getCategories
     )
     {
         var sortColumns = Enum.GetValues<TransactionSortColumn>()
@@ -57,24 +57,21 @@ public class TransactionIndexViewModel
                 },
             });
 
-        return new TransactionIndexViewModel()
+        return new TransactionIndex()
         {
-            Transactions = getTransactionsPageResponse
+            Transactions = getTransactionsPage
                 .Items.Select(t => new TransactionItem(t.Id, t.Amount, t.Date, t.Category, t.Comment))
                 .ToList(),
             PagingMetadata = new PagingMetadata(
-                getTransactionsPageResponse.PageNumber,
-                getTransactionsPageResponse.PageSize,
-                getTransactionsPageResponse.TotalCount,
-                getTransactionsPageResponse.TotalPages,
-                getTransactionsPageResponse.HasPreviousPage,
-                getTransactionsPageResponse.HasNextPage
+                getTransactionsPage.PageNumber,
+                getTransactionsPage.PageSize,
+                getTransactionsPage.TotalCount,
+                getTransactionsPage.TotalPages,
+                getTransactionsPage.HasPreviousPage,
+                getTransactionsPage.HasNextPage
             ),
             SearchTerm = request.SearchTerm,
-            Categories = new SelectList(
-                getCategoriesResponse.Categories.Select(c => c.Name),
-                selectedValue: request.Category
-            ),
+            Categories = new SelectList(getCategories.Categories.Select(c => c.Name), selectedValue: request.Category),
             SortColumns = new SelectList(sortColumns, "Value", "Text", selectedValue: request.SortColumn),
             SortOrders = new SelectList(Enum.GetValues<SortOrder>(), selectedValue: request.SortOrder),
             PageSizes = new SelectList(PagingDefaults.PageSizeOptions, selectedValue: request.PageSize),

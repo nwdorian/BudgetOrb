@@ -22,25 +22,14 @@ public class TransactionsController(ITransactionService transactionService, ICat
             return BadRequest();
         }
 
-        GetTransactionsPageQuery getTransactionsPageQuery = new(
-            request.SearchTerm,
-            request.Category,
-            request.StartDateUtc,
-            request.EndDateUtc,
-            request.PageNumber,
-            request.PageSize,
-            request.SortColumn,
-            request.SortOrder
-        );
-
-        GetTransactionsPageResponse getTransactionsPageResponse = await transactionService.GetPage(
-            getTransactionsPageQuery,
+        GetTransactionsPageResponse getTransactionsPage = await transactionService.GetPage(
+            request.ToQuery(),
             cancellationToken
         );
 
-        GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
+        GetCategoriesResponse getCategories = await categoryService.Get(cancellationToken);
 
-        return View(TransactionIndexViewModel.Create(request, getTransactionsPageResponse, getCategoriesResponse));
+        return View(TransactionIndex.Create(request, getTransactionsPage, getCategories));
     }
 
     public async Task<IActionResult> Create(CancellationToken cancellationToken = default)

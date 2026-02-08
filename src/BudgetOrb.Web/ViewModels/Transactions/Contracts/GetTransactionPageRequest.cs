@@ -20,3 +20,23 @@ public record class GetTransactionPageRequest(
 
     public DateTime? EndDateUtc => EndDate.HasValue ? DateTime.SpecifyKind(EndDate.Value, DateTimeKind.Utc) : null;
 }
+
+public static class GetTransactionPageMapping
+{
+    extension(GetTransactionPageRequest request)
+    {
+        public GetTransactionsPageQuery ToQuery()
+        {
+            return new(
+                request.SearchTerm,
+                request.Category,
+                request.StartDateUtc,
+                request.EndDateUtc,
+                request.PageNumber,
+                request.PageSize,
+                request.SortColumn,
+                request.SortOrder
+            );
+        }
+    }
+}
