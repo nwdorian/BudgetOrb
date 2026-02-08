@@ -88,9 +88,13 @@
                 <td>
                     @Html.DisplayFor(model => item.Category)
                 </td>
-                <td>
-                    <button type="button" class="btn btn-primary" onclick="loadDeleteModal('@item.Id')">Delete</button>
-                    <button type="button" class="btn btn-primary" onclick="loadUpdateModal('@item.Id')">Update</button>
+                <td class="text-end">
+                    <button type="button" class="btn btn-primary" onclick="loadDeleteModal('@item.Id')">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="loadUpdateModal('@item.Id')">
+                        <i class="bi bi-trash3"></i>
+                    </button>
                 </td>
             </tr>
         }
