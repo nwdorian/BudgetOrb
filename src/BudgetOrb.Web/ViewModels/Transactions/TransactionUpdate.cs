@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BudgetOrb.Web.ViewModels.Transactions;
 
-public class TransactionUpdateViewModel
+public class TransactionUpdate
 {
     public SelectList? Categories { get; set; }
 
@@ -25,7 +25,7 @@ public class TransactionUpdateViewModel
     [MaxLength(255)]
     public string? Comment { get; set; }
 
-    public static TransactionUpdateViewModel Empty =>
+    public static TransactionUpdate Empty =>
         new()
         {
             Categories = new SelectList(new List<SelectListItem>()),
@@ -35,12 +35,12 @@ public class TransactionUpdateViewModel
             Comment = string.Empty,
         };
 
-    public static TransactionUpdateViewModel Create(
+    public static TransactionUpdate Create(
         GetTransactionByIdResponse getTransactionByIdResponse,
         GetCategoriesResponse getCategoriesResponse
     )
     {
-        return new TransactionUpdateViewModel()
+        return new TransactionUpdate()
         {
             Categories = new SelectList(
                 getCategoriesResponse.Categories,
@@ -54,11 +54,16 @@ public class TransactionUpdateViewModel
             Comment = getTransactionByIdResponse.Comment,
         };
     }
+
+    public void SetCategories(GetCategoriesResponse getCategories)
+    {
+        Categories = new SelectList(getCategories.Categories, "Id", "Name");
+    }
 }
 
 public static class TransactionUpdateMapping
 {
-    extension(TransactionUpdateViewModel model)
+    extension(TransactionUpdate model)
     {
         public UpdateTransactionCommand ToCommand()
         {

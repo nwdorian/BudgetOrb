@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BudgetOrb.Application.Categories.Contracts;
+using BudgetOrb.Application.Transactions.Contracts;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BudgetOrb.Web.ViewModels.Transactions;
 
-public class TransactionCreateViewModel
+public class TransactionCreate
 {
     public SelectList? Categories { get; set; }
 
@@ -24,12 +25,33 @@ public class TransactionCreateViewModel
     [MaxLength(255)]
     public string? Comment { get; set; }
 
-    public static TransactionCreateViewModel Create(GetCategoriesResponse getCategoriesResponse)
+    public static TransactionCreate Create(GetCategoriesResponse getCategories)
     {
-        return new TransactionCreateViewModel()
+        return new TransactionCreate()
         {
-            Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name"),
+            Categories = new SelectList(getCategories.Categories, "Id", "Name"),
             Date = DateTime.Now,
         };
+    }
+
+    public void SetCategories(GetCategoriesResponse getCategories)
+    {
+        Categories = new SelectList(getCategories.Categories, "Id", "Name");
+    }
+}
+
+public static class TransactionCreateMapping
+{
+    extension(TransactionCreate model)
+    {
+        public CreateTransactionCommand ToCommand()
+        {
+            return new(
+                model.CategoryId!.Value,
+                DateTime.SpecifyKind(model.Date!.Value, DateTimeKind.Utc),
+                model.Amount,
+                model.Comment
+            );
+        }
     }
 }

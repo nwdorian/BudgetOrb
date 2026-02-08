@@ -2,10 +2,10 @@
 using BudgetOrb.Application.Categories.Contracts;
 using BudgetOrb.Application.Transactions.Contracts;
 using BudgetOrb.Domain.Core.Results;
+using BudgetOrb.Web.Constants;
 using BudgetOrb.Web.ViewModels.Transactions;
 using BudgetOrb.Web.ViewModels.Transactions.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BudgetOrb.Web.Controllers;
 
@@ -14,7 +14,7 @@ public class TransactionsController(ITransactionService transactionService, ICat
 {
     public async Task<IActionResult> Index(
         [FromQuery] GetTransactionPageRequest request,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         if (!ModelState.IsValid)
@@ -34,84 +34,56 @@ public class TransactionsController(ITransactionService transactionService, ICat
 
     public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
     {
-        GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
-
-        return PartialView("_CreateTransactionPartial", TransactionCreateViewModel.Create(getCategoriesResponse));
+        return PartialView(
+            Partials.CreateTransaction,
+            TransactionCreate.Create(await categoryService.Get(cancellationToken))
+        );
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(
-        TransactionCreateViewModel createModel,
-        CancellationToken cancellationToken = default
-    )
+    public async Task<IActionResult> Create(TransactionCreate createModel, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
-            createModel.Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name");
-
-            return PartialView("_CreateTransactionPartial", createModel);
+            createModel.SetCategories(await categoryService.Get(cancellationToken));
+            return PartialView(Partials.CreateTransaction, createModel);
         }
 
-        CreateTransactionCommand createTransactionCommand = new(
-            createModel.CategoryId!.Value,
-            DateTime.SpecifyKind(createModel.Date!.Value, DateTimeKind.Utc),
-            createModel.Amount,
-            createModel.Comment
-        );
-
-        Result createTransaction = await transactionService.Create(createTransactionCommand, cancellationToken);
+        Result createTransaction = await transactionService.Create(createModel.ToCommand(), cancellationToken);
 
         if (createTransaction.IsFailure)
         {
             ModelState.AddModelError(string.Empty, createTransaction.Error.Description);
-
-            GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
-            createModel.Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name");
-
-            return PartialView("_CreateTransactionPartial", createModel);
+            createModel.SetCategories(await categoryService.Get(cancellationToken));
+            return PartialView(Partials.CreateTransaction, createModel);
         }
 
         return Created();
     }
 
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest();
         }
 
-        GetTransactionByIdQuery getTransactionByIdQuery = new(id);
-        Result<GetTransactionByIdResponse> getTransactionByIdResponse = await transactionService.GetById(
-            getTransactionByIdQuery,
+        Result<GetTransactionByIdResponse> getTransactionById = await transactionService.GetById(
+            new GetTransactionByIdQuery(id),
             cancellationToken
         );
 
-        if (getTransactionByIdResponse.IsFailure)
+        if (getTransactionById.IsFailure)
         {
-            ModelState.AddModelError(string.Empty, getTransactionByIdResponse.Error.Description);
-
-            return PartialView(
-                "_DeleteTransactionPartial",
-                TransactionDeleteViewModel.Create(Guid.Empty, DateTime.Now, 0, string.Empty, string.Empty)
-            );
+            ModelState.AddModelError(string.Empty, getTransactionById.Error.Description);
+            return PartialView(Partials.DeleteTransaction, TransactionDelete.Empty);
         }
 
-        return PartialView(
-            "_DeleteTransactionPartial",
-            TransactionDeleteViewModel.Create(
-                getTransactionByIdResponse.Value.Id,
-                getTransactionByIdResponse.Value.Date,
-                getTransactionByIdResponse.Value.Amount,
-                getTransactionByIdResponse.Value.Comment,
-                getTransactionByIdResponse.Value.Category
-            )
-        );
+        return PartialView(Partials.DeleteTransaction, TransactionDelete.Create(getTransactionById.Value));
     }
 
-    [HttpPost, ActionName("Delete")]
+    [HttpPost, ActionName(nameof(Delete))]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id, CancellationToken cancellationToken)
     {
@@ -120,64 +92,51 @@ public class TransactionsController(ITransactionService transactionService, ICat
             return BadRequest();
         }
 
-        DeleteTransactionCommand deleteTransactionCommand = new(id);
-        Result deleteTransactionResult = await transactionService.Delete(deleteTransactionCommand, cancellationToken);
+        Result deleteTransaction = await transactionService.Delete(new DeleteTransactionCommand(id), cancellationToken);
 
-        if (deleteTransactionResult.IsFailure)
+        if (deleteTransaction.IsFailure)
         {
-            ModelState.AddModelError(string.Empty, deleteTransactionResult.Error.Description);
-
-            return PartialView(
-                "_DeleteTransactionPartial",
-                TransactionDeleteViewModel.Create(Guid.Empty, DateTime.Now, 0, string.Empty, string.Empty)
-            );
+            ModelState.AddModelError(string.Empty, deleteTransaction.Error.Description);
+            return PartialView(Partials.DeleteTransaction, TransactionDelete.Empty);
         }
 
         return NoContent();
     }
 
-    public async Task<IActionResult> Update(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Update(Guid id, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest();
         }
 
-        GetTransactionByIdQuery getTransactionByIdQuery = new(id);
-        Result<GetTransactionByIdResponse> getTransactionByIdResponse = await transactionService.GetById(
-            getTransactionByIdQuery,
+        Result<GetTransactionByIdResponse> getTransactionById = await transactionService.GetById(
+            new GetTransactionByIdQuery(id),
             cancellationToken
         );
 
-        if (getTransactionByIdResponse.IsFailure)
+        if (getTransactionById.IsFailure)
         {
-            ModelState.AddModelError(string.Empty, getTransactionByIdResponse.Error.Description);
-
-            return PartialView("_UpdateTransactionPartial", TransactionUpdateViewModel.Empty);
+            ModelState.AddModelError(string.Empty, getTransactionById.Error.Description);
+            return PartialView(Partials.UpdateTransaction, TransactionUpdate.Empty);
         }
 
-        GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
+        GetCategoriesResponse getCategories = await categoryService.Get(cancellationToken);
 
         return PartialView(
-            "_UpdateTransactionPartial",
-            TransactionUpdateViewModel.Create(getTransactionByIdResponse.Value, getCategoriesResponse)
+            Partials.UpdateTransaction,
+            TransactionUpdate.Create(getTransactionById.Value, getCategories)
         );
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Update(
-        Guid id,
-        TransactionUpdateViewModel updateModel,
-        CancellationToken cancellationToken
-    )
+    public async Task<IActionResult> Update(Guid id, TransactionUpdate updateModel, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
-            updateModel.Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name");
-
-            return PartialView("_UpdateTransactionPartial", updateModel);
+            updateModel.SetCategories(await categoryService.Get(cancellationToken));
+            return PartialView(Partials.UpdateTransaction, updateModel);
         }
 
         Result updateTransaction = await transactionService.Update(id, updateModel.ToCommand(), cancellationToken);
@@ -185,11 +144,8 @@ public class TransactionsController(ITransactionService transactionService, ICat
         if (updateTransaction.IsFailure)
         {
             ModelState.AddModelError(string.Empty, updateTransaction.Error.Description);
-
-            GetCategoriesResponse getCategoriesResponse = await categoryService.Get(cancellationToken);
-            updateModel.Categories = new SelectList(getCategoriesResponse.Categories, "Id", "Name");
-
-            return PartialView("_UpdateTransactionPartial", updateModel);
+            updateModel.SetCategories(await categoryService.Get(cancellationToken));
+            return PartialView(Partials.UpdateTransaction, updateModel);
         }
 
         return NoContent();
