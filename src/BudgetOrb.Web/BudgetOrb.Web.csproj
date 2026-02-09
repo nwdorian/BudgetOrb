@@ -11,7 +11,9 @@
     <ItemGroup>
         <Folder Include="Constants\" />
         <Folder Include="Extensions\" />
+        <Folder Include="ViewModels\Categories\" />
         <Folder Include="ViewModels\Shared\" />
+        <Folder Include="Views\Categories\" />
         <Folder Include="Views\Transactions\" />
     </ItemGroup>
 </Project>

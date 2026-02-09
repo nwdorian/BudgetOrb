@@ -1,0 +1,28 @@
+﻿@model CategoryIndex
+
+<div class="row g-4">
+    @foreach (var category in Model.Categories)
+    {
+        <div class="col-auto">
+            <div class="card border-primary text-center" style="width: 18rem">
+                <h4 class="card-header">@Html.DisplayFor(model => category.Name)</h4>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-12">
+                            @Html.DisplayNameFor(model => category.TotalTransactions)
+                        </dt>
+                        <dd class="col-12">
+                            @Html.DisplayFor(model => category.TotalTransactions)
+                        </dd>
+                        <dt class="col-12">
+                            @Html.DisplayNameFor(model => category.TotalTransactionsAmount)
+                        </dt>
+                        <dd class="col-12">
+                            @Html.DisplayFor(model => category.TotalTransactionsAmount)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    }
+</div>
