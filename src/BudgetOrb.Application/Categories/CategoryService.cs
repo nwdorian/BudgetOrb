@@ -1,6 +1,8 @@
 ﻿using BudgetOrb.Application.Abstractions;
 using BudgetOrb.Application.Abstractions.Data;
 using BudgetOrb.Application.Categories.Contracts;
+using BudgetOrb.Domain.Categories;
+using BudgetOrb.Domain.Core.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetOrb.Application.Categories;
@@ -29,5 +31,22 @@ public class CategoryService(IApplicationDbContext context) : ICategoryService
             .ToListAsync(cancellationToken);
 
         return new GetCategoriesDetailsResponse(categories);
+    }
+
+    public async Task<Result> Create(CreateCategoryCommand command, CancellationToken cancellationToken)
+    {
+        bool nameExists = await context.Categories.AnyAsync(c => c.Name == command.Name, cancellationToken);
+
+        if (nameExists)
+        {
+            return CategoryErrors.NameAlreadyExists(command.Name);
+        }
+
+        Category category = new() { Id = Guid.NewGuid(), Name = command.Name };
+
+        context.Categories.Add(category);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 }

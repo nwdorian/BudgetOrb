@@ -6,4 +6,7 @@ public static class CategoryErrors
 {
     public static Error NotFoundById(Guid id) =>
         Error.NotFound("Category.NotFoundById", $"The category with Id = {id} was not found.");
+
+    public static Error NameAlreadyExists(string name) =>
+        Error.Conflict("Category.NameAlreadyExists", $"Category with the name {name} already exists.");
 }

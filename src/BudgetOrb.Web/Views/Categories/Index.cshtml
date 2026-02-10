@@ -1,5 +1,9 @@
 ﻿@model CategoryIndex
 
+<div class="d-flex justify-content-center my-4">
+    <button type="button" class="btn btn-primary" onclick="loadCreateModal()">New category</button>
+</div>
+
 <div class="row g-4">
     @foreach (var category in Model.Categories)
     {
@@ -26,3 +30,9 @@
         </div>
     }
 </div>
+
+<div id="create-category-modal-placeholder"></div>
+
+@section Scripts {
+    <script src="~/js/Categories/createCategory.js"></script>
+}
