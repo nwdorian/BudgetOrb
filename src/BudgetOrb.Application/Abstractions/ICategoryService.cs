@@ -10,4 +10,5 @@ public interface ICategoryService
     Task<Result<GetCategoryByIdResponse>> GetById(GetCategoryByIdQuery query, CancellationToken cancellationToken);
     Task<Result> Create(CreateCategoryCommand command, CancellationToken cancellationToken);
     Task<Result> Delete(DeleteCategoryCommand command, CancellationToken cancellationToken);
+    Task<Result> Update(Guid id, UpdateCategoryCommand command, CancellationToken cancellationToken);
 }

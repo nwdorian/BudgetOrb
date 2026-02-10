@@ -27,6 +27,9 @@
                     </dl>
                 </div>
                 <div class="card-footer">
+                    <button type="button" class="btn btn-danger" onclick="loadUpdateModal('@category.Id')">
+                        Update
+                    </button>
                     <button type="button" class="btn btn-danger" onclick="loadDeleteModal('@category.Id')">
                         Delete
                     </button>
@@ -39,8 +42,10 @@
 
 <div id="create-category-modal-placeholder"></div>
 <div id="delete-category-modal-placeholder"></div>
+<div id="update-category-modal-placeholder"></div>
 
 @section Scripts {
     <script src="~/js/Categories/createCategory.js"></script>
     <script src="~/js/Categories/deleteCategory.js"></script>
+    <script src="~/js/Categories/updateCategory.js"></script>
 }

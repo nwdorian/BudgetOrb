@@ -86,4 +86,45 @@ public class CategoriesController(ICategoryService categoryService) : Controller
 
         return NoContent();
     }
+
+    public async Task<IActionResult> Update(Guid id, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        Result<GetCategoryByIdResponse> getCategoryById = await categoryService.GetById(
+            new GetCategoryByIdQuery(id),
+            cancellationToken
+        );
+
+        if (getCategoryById.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, getCategoryById.Error.Description);
+            return PartialView(Partials.UpdateCategory, new CategoryUpdate());
+        }
+
+        return PartialView(Partials.UpdateCategory, CategoryUpdate.Create(getCategoryById.Value));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(Guid id, CategoryUpdate updateModel, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return PartialView(Partials.UpdateCategory, updateModel);
+        }
+
+        Result updateCategory = await categoryService.Update(id, updateModel.ToCommand(), cancellationToken);
+
+        if (updateCategory.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, updateCategory.Error.Description);
+            return PartialView(Partials.UpdateCategory, updateModel);
+        }
+
+        return NoContent();
+    }
 }

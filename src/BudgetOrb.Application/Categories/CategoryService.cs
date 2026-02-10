@@ -82,4 +82,27 @@ public class CategoryService(IApplicationDbContext context) : ICategoryService
 
         return Result.Success();
     }
+
+    public async Task<Result> Update(Guid id, UpdateCategoryCommand command, CancellationToken cancellationToken)
+    {
+        Category? category = await context
+            .Categories.AsTracking()
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+
+        if (category is null)
+        {
+            return CategoryErrors.NotFoundById(id);
+        }
+
+        if (await context.Categories.AnyAsync(c => c.Name == command.Name && c.Id != id, cancellationToken))
+        {
+            return CategoryErrors.NameAlreadyExists(command.Name);
+        }
+
+        category.Name = command.Name;
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
 }
