@@ -45,4 +45,45 @@ public class CategoriesController(ICategoryService categoryService) : Controller
 
         return Created();
     }
+
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        Result<GetCategoryByIdResponse> getCategoryById = await categoryService.GetById(
+            new GetCategoryByIdQuery(id),
+            cancellationToken
+        );
+
+        if (getCategoryById.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, getCategoryById.Error.Description);
+            return PartialView(Partials.DeleteCategory, new CategoryDelete());
+        }
+
+        return PartialView(Partials.DeleteCategory, CategoryDelete.Create(getCategoryById.Value));
+    }
+
+    [HttpPost, ActionName(nameof(Delete))]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(Guid id, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        Result deleteCategory = await categoryService.Delete(new DeleteCategoryCommand(id), cancellationToken);
+
+        if (deleteCategory.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, deleteCategory.Error.Description);
+            return PartialView(Partials.DeleteCategory, new CategoryDelete());
+        }
+
+        return NoContent();
+    }
 }

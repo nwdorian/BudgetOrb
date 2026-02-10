@@ -6,4 +6,5 @@ public static class Partials
     public const string DeleteTransaction = "_DeleteTransactionPartial";
     public const string UpdateTransaction = "_UpdateTransactionPartial";
     public const string CreateCategory = "_CreateCategoryPartial";
+    public const string DeleteCategory = "_DeleteCategoryPartial";
 }

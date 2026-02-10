@@ -33,6 +33,24 @@ public class CategoryService(IApplicationDbContext context) : ICategoryService
         return new GetCategoriesDetailsResponse(categories);
     }
 
+    public async Task<Result<GetCategoryByIdResponse>> GetById(
+        GetCategoryByIdQuery query,
+        CancellationToken cancellationToken
+    )
+    {
+        GetCategoryByIdResponse? response = await context
+            .Categories.Where(c => c.Id == query.Id)
+            .Select(c => new GetCategoryByIdResponse(c.Id, c.Name))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (response is null)
+        {
+            return CategoryErrors.NotFoundById(query.Id);
+        }
+
+        return response;
+    }
+
     public async Task<Result> Create(CreateCategoryCommand command, CancellationToken cancellationToken)
     {
         bool nameExists = await context.Categories.AnyAsync(c => c.Name == command.Name, cancellationToken);
@@ -42,9 +60,24 @@ public class CategoryService(IApplicationDbContext context) : ICategoryService
             return CategoryErrors.NameAlreadyExists(command.Name);
         }
 
-        Category category = new() { Id = Guid.NewGuid(), Name = command.Name };
+        Category response = new() { Id = Guid.NewGuid(), Name = command.Name };
 
-        context.Categories.Add(category);
+        context.Categories.Add(response);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> Delete(DeleteCategoryCommand command, CancellationToken cancellationToken)
+    {
+        Category? response = await context.Categories.FirstOrDefaultAsync(c => c.Id == command.Id, cancellationToken);
+
+        if (response is null)
+        {
+            return CategoryErrors.NotFoundById(command.Id);
+        }
+
+        context.Categories.Remove(response);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
