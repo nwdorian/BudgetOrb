@@ -151,7 +151,9 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
 
     public async Task<Result> Update(Guid id, UpdateTransactionCommand command, CancellationToken cancellationToken)
     {
-        Transaction? transaction = await context.Transactions.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+        Transaction? transaction = await context
+            .Transactions.AsTracking()
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
         if (transaction is null)
         {
@@ -173,7 +175,6 @@ public class TransactionService(IApplicationDbContext context) : ITransactionSer
             transaction.Comment = command.Comment;
         }
 
-        context.Transactions.Update(transaction);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
