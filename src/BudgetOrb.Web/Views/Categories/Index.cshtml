@@ -26,13 +26,21 @@
                         </dd>
                     </dl>
                 </div>
-                <div class="card-footer">
-                    <button type="button" class="btn btn-danger" onclick="loadUpdateModal('@category.Id')">
-                        Update
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="loadDeleteModal('@category.Id')">
-                        Delete
-                    </button>
+                <div class="card-footer p-0 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-6 border-end border-secondary">
+                            <button type="button" class="btn btn-light w-100 rounded-0 border-0 text-decoration-none py-2"
+                                    onclick="loadUpdateModal('@category.Id')">
+                                Update
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-light w-100 rounded-0 border-0 text-decoration-none py-2"
+                                    onclick="loadDeleteModal('@category.Id')">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
