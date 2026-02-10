@@ -46,12 +46,7 @@ public static class TransactionCreateMapping
     {
         public CreateTransactionCommand ToCommand()
         {
-            return new(
-                model.CategoryId!.Value,
-                DateTime.SpecifyKind(model.Date!.Value, DateTimeKind.Utc),
-                model.Amount,
-                model.Comment
-            );
+            return new(model.CategoryId!.Value, model.Date!.Value, model.Amount, model.Comment);
         }
     }
 }

@@ -13,13 +13,7 @@ public record class GetTransactionPageRequest(
     int PageSize = PagingDefaults.PageSize,
     TransactionSortColumn SortColumn = TransactionSortColumn.Category,
     SortOrder SortOrder = SortOrder.Ascending
-)
-{
-    public DateTime? StartDateUtc =>
-        StartDate.HasValue ? DateTime.SpecifyKind(StartDate.Value, DateTimeKind.Utc) : null;
-
-    public DateTime? EndDateUtc => EndDate.HasValue ? DateTime.SpecifyKind(EndDate.Value, DateTimeKind.Utc) : null;
-}
+);
 
 public static class GetTransactionPageMapping
 {
@@ -30,8 +24,8 @@ public static class GetTransactionPageMapping
             return new(
                 request.SearchTerm,
                 request.Category,
-                request.StartDateUtc,
-                request.EndDateUtc,
+                request.StartDate,
+                request.StartDate,
                 request.PageNumber,
                 request.PageSize,
                 request.SortColumn,
