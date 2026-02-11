@@ -1,6 +1,6 @@
 ﻿@model TransactionDelete
 
-<div class="modal fade" id="delete-transaction-modal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="delete-transactions-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,7 @@
             </div>
 
             <form asp-action="Delete" asp-route-id="@Model.Id" id="delete-transaction-form"
-                  onsubmit="submitDelete(this, event)">
+                  onsubmit="submitModalForm(this, event, 204)">
                 <div class="modal-body">
                     <p>Are you sure you want to delete this transaction?</p>
 

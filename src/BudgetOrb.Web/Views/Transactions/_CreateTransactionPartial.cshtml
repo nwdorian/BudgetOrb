@@ -1,6 +1,6 @@
 ﻿@model TransactionCreate
 
-<div class="modal fade" id="create-transaction-modal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="create-transactions-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,7 +8,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form asp-action="Create" id="create-transaction-form" onsubmit="submitCreate(this, event)">
+            <form asp-action="Create" id="create-transaction-form" onsubmit="submitModalForm(this, event, 201)">
                 <div class="modal-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

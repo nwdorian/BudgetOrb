@@ -1,16 +1,16 @@
 ﻿@model CategoryIndex
 
 <div class="d-flex justify-content-center my-4">
-    <button type="button" class="btn btn-primary" onclick="loadCreateModal()">New category</button>
+    <button type="button" class="btn btn-primary" onclick="loadModal('Categories', 'Create')">New category</button>
 </div>
 
 <div class="row g-4">
     @foreach (var category in Model.Categories)
     {
         <div class="col-auto">
-            <div class="card border-primary text-center" style="width: 18rem">
+            <div class="card h-100 border-primary text-center" style="width: 18rem">
                 <h4 class="card-header">@Html.DisplayFor(model => category.Name)</h4>
-                <div class="card-body">
+                <div class="card-body d-flex align-items-center">
                     <dl class="row mb-0">
                         <dt class="col-12">
                             @Html.DisplayNameFor(model => category.TotalTransactions)
@@ -30,13 +30,13 @@
                     <div class="row g-0">
                         <div class="col-6 border-end border-secondary">
                             <button type="button" class="btn btn-light w-100 rounded-0 border-0 text-decoration-none py-2"
-                                    onclick="loadUpdateModal('@category.Id')">
+                                    onclick="loadModal('Categories', 'Update','@category.Id')">
                                 Update
                             </button>
                         </div>
                         <div class="col-6">
                             <button type="button" class="btn btn-light w-100 rounded-0 border-0 text-decoration-none py-2"
-                                    onclick="loadDeleteModal('@category.Id')">
+                                    onclick="loadModal('Categories', 'Delete','@category.Id')">
                                 Delete
                             </button>
                         </div>
@@ -48,12 +48,8 @@
     }
 </div>
 
-<div id="create-category-modal-placeholder"></div>
-<div id="delete-category-modal-placeholder"></div>
-<div id="update-category-modal-placeholder"></div>
+<div id="modal-placeholder"></div>
 
 @section Scripts {
-    <script src="~/js/Categories/createCategory.js"></script>
-    <script src="~/js/Categories/deleteCategory.js"></script>
-    <script src="~/js/Categories/updateCategory.js"></script>
+    <script src="~/js/modalManager.js"></script>
 }

@@ -21,125 +21,124 @@
             <input class="form-control" id="search-term" type="text" asp-for="SearchTerm" placeholder="Search..."
                    oninput="this.form.submit()" style="width: 300px;" />
 
-            <button type="button" class="btn btn-primary" onclick="loadCreateModal()">New transaction</button>
+            <button type="button" class="btn btn-primary" onclick="loadModal('Transactions', 'Create')">New
+                transaction</button>
+            </div>
+
         </div>
 
-    </div>
+        <div class="d-flex align-items-center gap-3 flex-wrap p-2 bg-light rounded border mb-3">
+            <div class="d-flex align-items-center gap-1">
+                <label class="small fw-bold text-muted" for="category-select">Category:</label>
+                <select class="form-select form-select-sm w-auto" id="category-select" asp-for="Category"
+                        asp-items="Model.Categories" onchange="this.form.submit()">
+                    <option value="">All</option>
+                </select>
+            </div>
 
-    <div class="d-flex align-items-center gap-3 flex-wrap p-2 bg-light rounded border mb-3">
-        <div class="d-flex align-items-center gap-1">
-            <label class="small fw-bold text-muted" for="category-select">Category:</label>
-            <select class="form-select form-select-sm w-auto" id="category-select" asp-for="Category"
-                    asp-items="Model.Categories" onchange="this.form.submit()">
-                <option value="">All</option>
-            </select>
+            <div class="d-flex align-items-center gap-1">
+                <label class="small fw-bold text-muted">From:</label>
+                <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="StartDate"
+                       onchange="this.form.submit()" />
+                <label class="small fw-bold text-muted">To:</label>
+                <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="EndDate"
+                       onchange="this.form.submit()" />
+            </div>
+
+            <div class="d-flex align-items-center gap-1 ms-auto">
+                <label class="small fw-bold text-muted">Sort:</label>
+                <select class="form-select-sm w-auto" asp-for="SortColumn" asp-items="Model.SortColumns"
+                        onchange="this.form.submit()"></select>
+                <select class="form-select-sm w-auto" asp-for="SortOrder" asp-items="Model.SortOrders"
+                        onchange="this.form.submit()"></select>
+            </div>
         </div>
+    </form>
 
-        <div class="d-flex align-items-center gap-1">
-            <label class="small fw-bold text-muted">From:</label>
-            <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="StartDate"
-                   onchange="this.form.submit()" />
-            <label class="small fw-bold text-muted">To:</label>
-            <input class="form-control form-control-sm w-auto" type="datetime-local" asp-for="EndDate"
-                   onchange="this.form.submit()" />
-        </div>
-
-        <div class="d-flex align-items-center gap-1 ms-auto">
-            <label class="small fw-bold text-muted">Sort:</label>
-            <select class="form-select-sm w-auto" asp-for="SortColumn" asp-items="Model.SortColumns"
-                    onchange="this.form.submit()"></select>
-            <select class="form-select-sm w-auto" asp-for="SortOrder" asp-items="Model.SortOrders"
-                    onchange="this.form.submit()"></select>
-        </div>
-    </div>
-</form>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Transactions[0].Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Transactions[0].Amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Transactions[0].Comment)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Transactions[0].Category)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Transactions)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(model => item.Date)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.Amount)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.Comment)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.Category)
-                </td>
-                <td class="text-end">
-                    <button type="button" class="btn btn-outline-primary" onclick="loadUpdateModal('@item.Id')">
-                        <i class="bi bi-pencil-square"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="loadDeleteModal('@item.Id')">
-                        <i class="bi bi-trash3"></i>
-                    </button>
-
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].Comment)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].Category)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Transactions)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Amount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Category)
+                    </td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-outline-primary"
+                                onclick="loadModal('Transactions', 'Update', '@item.Id')">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary"
+                                onclick="loadModal('Transactions', 'Delete', '@item.Id')">
+                            <i class="bi bi-trash3"></i>
+                        </button>
 
-<div class="d-flex justify-content-between align-items-center">
-    <ul class="pagination mb-0">
-        <li class="page-item @(Model.PagingMetadata.HasPreviousPage ? "" : "disabled")">
-            <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
-                   asp-route-PageNumber="@(Model.PagingMetadata.PageNumber - 1)">
-                <i class="bi bi-caret-left-fill"></i>
-            </a>
-        </li>
-        @for (var i = Model.PagingMetadata.StartPage; i <= Model.PagingMetadata.EndPage; i++)
-        {
-            <li class="page-item @(i == Model.PagingMetadata.PageNumber ? "active" : "")">
-                <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues" asp-route-PageNumber="@i">
-                    @i
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <ul class="pagination mb-0">
+            <li class="page-item @(Model.PagingMetadata.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
+                       asp-route-PageNumber="@(Model.PagingMetadata.PageNumber - 1)">
+                    <i class="bi bi-caret-left-fill"></i>
                 </a>
             </li>
-        }
-        <li class="page-item @(Model.PagingMetadata.HasNextPage ? "" : "disabled")">
-            <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
-                   asp-route-PageNumber="@(Model.PagingMetadata.PageNumber + 1)">
-                <i class="bi bi-caret-right-fill"></i>
-            </a>
-        </li>
-    </ul>
-    <div class="d-flex align-items-center gap-2">
-        <label class="form-label" for="page-size-select">Page size: </label>
-        <select class="form-select w-auto" id="page-size-select" form="filter-form" asp-for="PageSize"
-                asp-items="Model.PageSizes" onchange="document.getElementById('filter-form').submit()">
-        </select>
+            @for (var i = Model.PagingMetadata.StartPage; i <= Model.PagingMetadata.EndPage; i++)
+            {
+                <li class="page-item @(i == Model.PagingMetadata.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues" asp-route-PageNumber="@i">
+                        @i
+                    </a>
+                </li>
+            }
+            <li class="page-item @(Model.PagingMetadata.HasNextPage ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-all-route-data="pagingRouteValues"
+                       asp-route-PageNumber="@(Model.PagingMetadata.PageNumber + 1)">
+                    <i class="bi bi-caret-right-fill"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+            <label class="form-label" for="page-size-select">Page size: </label>
+            <select class="form-select w-auto" id="page-size-select" form="filter-form" asp-for="PageSize"
+                    asp-items="Model.PageSizes" onchange="document.getElementById('filter-form').submit()">
+            </select>
+        </div>
     </div>
-</div>
 
-<div id="create-transaction-modal-placeholder"></div>
-<div id="delete-transaction-modal-placeholder"></div>
-<div id="update-transaction-modal-placeholder"></div>
+    <div id="modal-placeholder"></div>
 
-@section Scripts {
-    <script src="~/js/focusSearchInput.js"></script>
-    <script src="~/js/Transactions/createTransaction.js"></script>
-    <script src="~/js/Transactions/deleteTransaction.js"></script>
-    <script src="~/js/Transactions/updateTransaction.js"></script>
-}
+    @section Scripts {
+        <script src="~/js/focusSearchInput.js"></script>
+        <script src="~/js/modalManager.js"></script>
+    }
