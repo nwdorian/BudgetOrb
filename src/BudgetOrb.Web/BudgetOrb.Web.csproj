@@ -15,5 +15,6 @@
         <Folder Include="ViewModels\Shared\" />
         <Folder Include="Views\Categories\" />
         <Folder Include="Views\Transactions\" />
+        <Folder Include="wwwroot\img\" />
     </ItemGroup>
 </Project>
